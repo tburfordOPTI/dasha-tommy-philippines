@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For Dasha &amp; Tommy — Philippines, February 2027</title>
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+<style>
+:root{
+  --cream:#f3ead8;--ink:#0b3d47;--gold:#c9a056;--paper:#faf6ec;--muted:#4a6a70;
+  --card:#fffdf6;--shadow:0 12px 40px rgba(11,61,71,.12);
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  background:var(--cream);color:var(--ink);line-height:1.55;font-size:18px;}
+img{max-width:100%;display:block;height:auto}
+a{color:var(--ink)}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px 80px}
+nav.top{position:sticky;top:0;z-index:40;background:rgba(243,234,216,.92);
+  backdrop-filter:blur(10px);border-bottom:1px solid rgba(11,61,71,.08)}
+nav.top .inner{max-width:960px;margin:0 auto;padding:10px 16px;display:flex;gap:10px;align-items:center;overflow-x:auto}
+nav.top a{font-size:12px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;white-space:nowrap;color:var(--muted)}
+nav.top a:hover{color:var(--ink)}
+.short-btn{margin-left:auto;background:var(--ink);color:var(--cream);border:0;border-radius:999px;
+  padding:8px 14px;font:inherit;font-size:13px;letter-spacing:.06em;cursor:pointer;white-space:nowrap}
+.hero{position:relative;min-height:92vh;display:flex;align-items:flex-end;color:var(--cream);overflow:hidden}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,61,71,.85),rgba(11,61,71,.15) 50%,rgba(11,61,71,.25))}
+.hero .copy{position:relative;z-index:1;padding:28px 24px 48px;max-width:820px}
+.kicker{letter-spacing:.28em;text-transform:uppercase;font-size:11px;color:var(--gold);font-family:system-ui,sans-serif}
+h1{font-weight:400;font-size:clamp(2.4rem,8vw,4.6rem);line-height:1.05;margin:.2em 0 .3em}
+h2{font-weight:400;font-size:clamp(1.6rem,4vw,2.4rem);margin:0 0 .4em;line-height:1.15}
+h3{font-weight:400;font-size:1.25rem;margin:0 0 .35em}
+.lede{font-size:1.15rem;max-width:38em}
+.caption{font-family:system-ui,sans-serif;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-top:8px}
+.fig{margin:28px 0}
+.fig img{width:100%;border-radius:2px}
+section{padding:56px 0 8px}
+p{margin:0 0 1em}
+.note{border-left:3px solid var(--gold);padding:4px 0 4px 16px;color:var(--muted);font-size:.95rem}
+.grid{display:grid;gap:16px}
+@media(min-width:700px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:1fr 1fr 1fr}}
+.card{background:var(--card);border:1px solid rgba(11,61,71,.08);padding:18px 18px 16px;box-shadow:var(--shadow);border-radius:4px}
+.badge{display:inline-block;font-family:system-ui,sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 8px;border-radius:999px;margin-bottom:8px}
+.go{background:#d5ead6;color:#1d4a28}.later{background:#efe3c4;color:#6a4e12}.skip{background:#ead9d5;color:#6a2b22}
+.type{font-family:system-ui,sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.save{margin-top:12px;background:transparent;border:1px solid var(--ink);color:var(--ink);padding:7px 12px;border-radius:999px;
+  font:inherit;font-size:13px;cursor:pointer;letter-spacing:.04em}
+.save.on{background:var(--ink);color:var(--cream)}
+.days{display:grid;gap:12px}
+.day{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:start}
+.day .n{font-family:system-ui,sans-serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);padding-top:4px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid rgba(11,61,71,.12);vertical-align:top}
+th{font-weight:400;letter-spacing:.08em;text-transform:uppercase;font-size:11px;font-family:system-ui,sans-serif}
+.checklist label{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(11,61,71,.08);cursor:pointer}
+.checklist input{margin-top:6px}
+.phrase{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-size:.95rem;margin-bottom:8px}
+.phrase b{font-weight:500}
+#panel{position:fixed;inset:0 0 0 auto;width:min(420px,100%);background:var(--paper);z-index:80;
+  transform:translateX(110%);transition:transform .35s ease;box-shadow:-20px 0 60px rgba(11,61,71,.2);overflow:auto}
+#panel.open{transform:none}
+#panel .head{position:sticky;top:0;background:var(--paper);padding:16px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(11,61,71,.1)}
+#panel .body{padding:12px 18px 40px}
+#overlay{position:fixed;inset:0;background:rgba(11,61,71,.35);z-index:70;display:none}
+#overlay.show{display:block}
+.panel-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 20px}
+.panel-actions button{border:1px solid var(--ink);background:transparent;padding:8px 12px;border-radius:999px;font:inherit;font-size:13px;cursor:pointer}
+.panel-actions button.primary{background:var(--ink);color:var(--cream)}
+.saved-item{padding:10px 0;border-bottom:1px solid rgba(11,61,71,.08)}
+.empty{color:var(--muted);font-style:italic}
+footer{padding:40px 20px 80px;color:var(--muted);font-size:.9rem;max-width:720px;margin:0 auto}
+.hearts{display:flex;gap:8px;margin:18px 0}
+.heart{width:42px;height:42px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;font-size:18px}
+.heart.on{background:var(--gold);color:var(--ink)}
+@media print{
+  nav.top,#overlay,#panel .panel-actions,section,.hero,.short-btn,footer{display:none!important}
+  #panel{position:static;transform:none;width:100%;box-shadow:none;display:block!important}
+  body{background:#fff}
+  .print-only{display:block!important}
+}
+.print-only{display:none}
+
+.sitebar{background:var(--ink);color:var(--cream);font-family:system-ui,sans-serif;
+  font-size:12px;letter-spacing:.16em;text-transform:uppercase;padding:10px 20px;text-align:center}
+#mapsec{padding:0 0 8px;max-width:none}
+#mapsec .map-intro{max-width:720px;margin:0 auto;padding:40px 20px 16px}
+#mapwrap{position:relative;width:100%;height:70vh;min-height:420px;background:#dce8ea}
+#map{width:100%;height:100%;z-index:1}
+.map-tools{position:absolute;top:12px;left:12px;z-index:500;display:flex;flex-wrap:wrap;gap:8px;max-width:calc(100% - 24px)}
+.map-tools button,.map-tools label{
+  min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:0 14px;border-radius:999px;border:1px solid rgba(11,61,71,.2);background:rgba(250,246,236,.95);
+  font-family:system-ui,sans-serif;font-size:13px;color:var(--ink);cursor:pointer;box-shadow:0 4px 16px rgba(11,61,71,.12)}
+.map-tools button:hover{background:#fff}
+.map-tools label{user-select:none}
+.map-tools input{accent-color:var(--ink);width:16px;height:16px}
+.legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot-loc{background:#1a8a8a}.dot-att{background:#c9a056}.dot-stay{background:#c45c3e}
+.pin{width:18px;height:18px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.leaflet-popup-content{font-family:system-ui,sans-serif;font-size:14px;line-height:1.4}
+.leaflet-popup-content strong{display:block;font-family:Georgia,serif;font-size:16px;margin-bottom:4px}
+.popup-line{color:#4a6a70;margin:0 0 10px}
+.popup-actions{display:flex;gap:8px;flex-wrap:wrap}
+.popup-actions a,.popup-actions button{min-height:44px;padding:0 12px;border-radius:999px;display:inline-flex;align-items:center;
+  font:inherit;font-size:13px;cursor:pointer;text-decoration:none;color:var(--ink);border:1px solid var(--ink);background:transparent}
+.popup-actions button.on{background:var(--ink);color:var(--cream)}
+@media print{ #mapsec,.sitebar{display:none!important} }
+
+</style>
+</head>
+<body>
+<div class="sitebar">Dasha &amp; Tommy · Palawan</div>
+<nav class="top">
+  <div class="inner">
+    <a href="#cover">Cover</a>
+    <a href="#mapsec">Map</a>
+    <a href="#onepage">One page</a>
+    <a href="#when">February</a>
+    <a href="#money">Money</a>
+    <a href="#chooser">Islands</a>
+    <a href="#elnido">El Nido</a>
+    <a href="#later">Add days</a>
+    <a href="#around">Getting around</a>
+    <a href="#practical">Practical</a>
+    <a href="#tagalog">Tagalog</a>
+    <a href="#checklist">Checklist</a>
+    <a href="#sources">Sources</a>
+    <button class="short-btn" id="openShort" type="button">Shortlist <span id="count">0</span></button>
+  </div>
+</nav>
+
+<header class="hero" id="cover">
+  <img src="img/01-big-lagoon.jpg" alt="Big Lagoon, Miniloc Island">
+  <div class="veil"></div>
+  <div class="copy">
+    <div class="kicker">A planning book · not a printout</div>
+    <h1>For Dasha &amp; Tommy</h1>
+    <p class="lede">Philippines, February 2027. Ten days. West Palawan, dry season. One water cottage, a kayak, and the lagoon two minutes from the deck.</p>
+    <p class="caption">Feature — Big Lagoon · Location — Miniloc Island, El Nido, Palawan</p>
+  </div>
+</header>
+
+<div class="wrap">
+<section id="how">
+  <div class="kicker">How to use this book</div>
+  <h2>Scroll it like a site. Tap hearts to shortlist.</h2>
+  <p>This is written for the two of you, sitting together with a laptop or a phone, building one itinerary — not backpacking for a month. Mellyba-style planning books after long trips are 13 stops and five sample lengths. Yours is different: we already know the shape.</p>
+  <p>Tap <strong>Save</strong> on any island, stay, or activity you want to keep. The sticky Shortlist button holds the count. Open it to copy a plain-text list into Messages, or print just the shortlist as a one-page PDF.</p>
+  <div class="hearts">
+    <button class="heart" type="button" data-mood="yes" aria-label="We like this shape">♥</button>
+    <button class="heart" type="button" data-mood="maybe" aria-label="Maybe">♡</button>
+    <button class="heart" type="button" data-mood="talk" aria-label="Talk later">?</button>
+  </div>
+  <p class="note" id="moodNote">Tap a heart when you have a first reaction. It stays on this device.</p>
+
+</section>
+</div>
+
+<section id="mapsec">
+  <div class="map-intro">
+    <div class="kicker">Map</div>
+    <h2>El Nido first. The rest of the country when you zoom out.</h2>
+    <p>Pinch, scroll, or drag. Default view is Bacuit Bay so Miniloc and the lagoons are readable. <strong>Philippines</strong> zooms out to the archipelago. Teal is islands, gold is what you do, terracotta is where you sleep.</p>
+  </div>
+  <div id="mapwrap">
+    <div class="map-tools">
+      <button type="button" id="mapReset">Philippines</button>
+      <label><input type="checkbox" id="ly-loc" checked> <span class="legend-dot dot-loc"></span> Locations</label>
+      <label><input type="checkbox" id="ly-att" checked> <span class="legend-dot dot-att"></span> Attractions</label>
+      <label><input type="checkbox" id="ly-stay" checked> <span class="legend-dot dot-stay"></span> Stays</label>
+    </div>
+    <div id="map" role="application" aria-label="Interactive map of the Philippines trip"></div>
+  </div>
+</section>
+
+<div class="wrap">
+<section id="onepage">
+
+  <div class="kicker">Your trip in one page</div>
+  <h2>Sydney → Clark → Lio → Miniloc. Then stay.</h2>
+  <figure class="fig">
+    <img src="img/04-bacuit-karsts.jpg" alt="Limestone karsts in Bacuit Bay">
+    <figcaption class="caption">Feature — Limestone karsts · Location — Bacuit Bay, El Nido, Palawan</figcaption>
+  </figure>
+  <p>Tommy flies SYD–MNL about 8.5 hours, then you do <strong>not</strong> connect through NAIA for El Nido. From 29 March 2026 AirSwift El Nido (ENI) is via Clark (CRK). Build the itinerary around that: international into Manila or Clark, domestic out of Clark, boat from Lio into Bacuit Bay.</p>
+  <div class="days">
+    <div class="day"><div class="n">Day 0–1</div><div>Sydney overnight. Land, eTravel QR, one easy hotel near the next flight — or a same-day Clark connection if the timings are kind.</div></div>
+    <div class="day"><div class="n">Day 2</div><div>CRK → ENI (Lio). Eco fee. Boat to <strong>Miniloc Island water cottages</strong>. Swim off the deck. Do nothing else.</div></div>
+    <div class="day"><div class="n">Days 3–8</div><div>Seven nights over the water. One dawn kayak to Big Lagoon (about two minutes). House reef. One or two island-hop days only if you feel like leaving. Empty afternoons on purpose.</div></div>
+    <div class="day"><div class="n">Day 9</div><div>Boat back to Lio, ENI → CRK, overnight near the international flight — or a long same-day if you accept risk.</div></div>
+    <div class="day"><div class="n">Day 10</div><div>Home. Buffer this day; February weather is dry in the west, but domestic hops still slip.</div></div>
+  </div>
+  <p class="note">Skip combining Cebu + Palawan in ten days. Skip Siargao in February (Type II wet). Skip Oslob. The water cottage is the point.</p>
+</section>
+
+<section id="when">
+  <div class="kicker">When to go</div>
+  <h2>February honesty</h2>
+  <figure class="fig">
+    <img src="img/16-big-lagoon-morning.jpg" alt="Big Lagoon in the morning">
+    <figcaption class="caption">Feature — Big Lagoon, morning · Location — El Nido, Palawan</figcaption>
+  </figure>
+  <p>Industry and independent-blog consensus (the same warning you will hear from long-stay planners): <strong>March–May</strong> is the sweet window — still dry on the west, slightly fewer Christmas leftovers. Early January is the one to avoid for wind and cancelled tours. February is high season. Palawan is crowded. The water cottages and the good El Nido rooms book out.</p>
+  <p>We still pick February. You already locked it against Christmas. West Palawan is in its dry season. Miniloc in February is exactly the picture you wanted. Book the cottage <strong>4–6 months ahead</strong> — that is now, not later.</p>
+  <p>What February costs you: more people at Big Lagoon after 9am, higher nightly rates, and the 2026 lagoon rules (motorised boats cannot enter Big or Small Lagoon; kayak or paddle only; daily caps). What February gives you: the house-reef water, Cadlao in the afternoon light, and seven mornings that start on stilts.</p>
+</section>
+
+<section id="money">
+  <div class="kicker">Money · all figures AUD, couple</div>
+  <h2>Two budgets, so the €2,350 makes sense</h2>
+  <p>Budget A is yours. Budget B is the shape of a public sample 14-day backpacker/mid island-hop for two (~€2,350) — useful so Dasha can see what that number is actually describing. It is not overwater. It is not this trip.</p>
+  <h3>A — Your overwater 10 days</h3>
+  <table>
+    <tr><th>Line</th><th>Couple, AUD</th></tr>
+    <tr><td>Miniloc water cottage, per night for two, all-inclusive meals (Feb peak band)</td><td>~850–1,050</td></tr>
+    <tr><td>7 nights</td><td>~6,000–7,400</td></tr>
+    <tr><td>Sydney–Manila return, two people</td><td>~1,600–2,400</td></tr>
+    <tr><td>Domestic to El Nido, two people</td><td>~400–800</td></tr>
+    <tr><td>Eco fees, drinks, buffer</td><td>~300–600</td></tr>
+    <tr><td><strong>All-in for two</strong></td><td><strong>~9,000–12,000</strong></td></tr>
+  </table>
+  <p class="note">These bands are locked from our August 2026 research. Do not treat a random listing screenshot as more true than this.</p>
+  <h3>B — 14-day mid island-hop (the public €2,350)</h3>
+  <table>
+    <tr><th>Line</th><th>Couple, AUD (approx.)</th></tr>
+    <tr><td>€2,350 for two at a mid-2026 rate ~1.65</td><td>~3,900</td></tr>
+    <tr><td>What it buys</td><td>Guesthouses, ferries, shared tours, local meals — Coron / El Nido town / maybe one more stop. Not a water cottage. Not all-inclusive. Not February peak overwater.</td></tr>
+  </table>
+  <p>Sri Lanka sits once, as the cheaper sibling you already have: Ella 5 + south 4, couple ~AUD 5,000–7,500. Same length of holiday, jungle and tea instead of stilts. If the cottage quote comes in above 1,050 a night, that is the comparison — not a lesser Philippines.</p>
+</section>
+
+<section id="chooser">
+  <div class="kicker">Island chooser · the 13 public stops</div>
+  <h2>Go, later, or not this trip</h2>
+  <p>These are the well-known chapter islands, not anyone’s unpublished beaches. Verdicts are for <em>your</em> February 10 days.</p>
+  <div class="grid two" id="islands"></div>
+</section>
+
+<section id="elnido">
+  <div class="kicker">Deep dive</div>
+  <h2>El Nido is the actual trip</h2>
+  <figure class="fig">
+    <img src="img/02-big-lagoon-corridor.jpg" alt="Big Lagoon corridor">
+    <figcaption class="caption">Feature — Big Lagoon corridor · Location — Miniloc Island, El Nido, Palawan</figcaption>
+  </figure>
+  <p>Big Lagoon sits against Miniloc. From a water cottage you can be in a kayak before the day-tour boats stack up. 2026 rules: no motorised boats inside Big or Small Lagoon; paddle in; respect the daily cap. Small Lagoon is the slot you squeeze through. Cadlao is the mountain across the bay for a quieter paddle.</p>
+  <figure class="fig">
+    <img src="img/03-small-lagoon-kayak.jpg" alt="Kayak in Small Lagoon">
+    <figcaption class="caption">Feature — Small Lagoon kayak · Location — El Nido, Palawan</figcaption>
+  </figure>
+  <h3>Tours A–D, high level</h3>
+  <p>Town operators sell lettered island-hop days. You do not need all of them. If you leave Miniloc at all: <strong>A</strong> is the lagoon day (Big, Small, Secret Lagoon, Shimizu). <strong>C</strong> is hidden beaches and Helicopter Island energy. <strong>B</strong> and <strong>D</strong> are extra caves and sandbars — skip unless you are restless. From Miniloc, a private kayak at dawn replaces half of Tour A.</p>
+  <figure class="fig">
+    <img src="img/07-water-cottages.jpg" alt="Water cottages on stilts at Lagen">
+    <figcaption class="caption">Feature — Water cottages on stilts · Location — Lagen Island, Bacuit Bay, El Nido (same product type as Miniloc; this photo is Lagen)</figcaption>
+  </figure>
+  <h3>Miniloc vs Lagen vs a town villa</h3>
+  <p><strong>Miniloc water cottages</strong> are the stay to book: all-inclusive meals, house reef, Big Lagoon a two-minute kayak. The close-up cottage photo we have is Lagen — same Bacuit Bay stilts, labelled honestly. Lagen is the sibling resort: also over water, slightly further from Big Lagoon. A town villa in El Nido is cheaper and puts you in tricycles and 7am tour boats. You did not ask for that picture.</p>
+  <figure class="fig">
+    <img src="img/17-miniloc-resort.jpg" alt="Miniloc Island Resort from the water">
+    <figcaption class="caption">Feature — Miniloc Island Resort from the water · Location — Miniloc Island, El Nido, Palawan</figcaption>
+  </figure>
+  <figure class="fig">
+    <img src="img/08-miniloc-sunrise.jpg" alt="Sunrise from Miniloc">
+    <figcaption class="caption">Feature — Sunrise from a water cottage · Location — Miniloc Island, El Nido, Palawan</figcaption>
+  </figure>
+  <h3>Lio, Clark, eco fee</h3>
+  <p>Lio is the airport for El Nido, not a town beach day. AirSwift via Clark from 29 Mar 2026. Eco fee is paid on arrival in the municipality — small, cash-friendly, keep the receipt for island days. Bring some pesos; island ATMs are not a plan.</p>
+  <div class="grid two" id="stays"></div>
+  <h3>Days that stay empty</h3>
+  <figure class="fig">
+    <img src="img/09-kayak-cadlao.jpg" alt="Kayaking at Cadlao">
+    <figcaption class="caption">Feature — Kayaking · Location — Cadlao Island, El Nido, Palawan</figcaption>
+  </figure>
+  <figure class="fig">
+    <img src="img/10-house-reef.jpg" alt="Shallow coral house reef">
+    <figcaption class="caption">Feature — Shallow coral / house reef · Location — Bacuit Bay, El Nido, Palawan</figcaption>
+  </figure>
+  <div class="grid two" id="acts"></div>
+  <figure class="fig">
+    <img src="img/12-sunset-bacuit.jpg" alt="Sunset over Bacuit Bay">
+    <figcaption class="caption">Feature — Sunset · Location — Bacuit Bay, El Nido, Palawan</figcaption>
+  </figure>
+</section>
+
+<section id="later">
+  <div class="kicker">If you add days later</div>
+  <h2>Coron, Port Barton, not Balabac-as-a-weekend</h2>
+  <figure class="fig">
+    <img src="img/11-cadlao-bacuit-bay.jpg" alt="Cadlao across Bacuit Bay">
+    <figcaption class="caption">Feature — Cadlao Island across Bacuit Bay · Location — El Nido, Palawan</figcaption>
+  </figure>
+  <p><strong>Coron</strong> is a ferry (or a tiny hop) north: wrecks, Kayangan-type lakes, a different limestone. Worth 3 nights if you ever stretch to two weeks — not instead of Miniloc.</p>
+  <p><strong>Port Barton</strong> is the calmer Palawan town: slower boats, fewer lagoons, good if El Nido town ever felt loud. It is not the overwater picture.</p>
+  <p><strong>Balabac</strong> is a 3-day expedition from the far south of Palawan — permits, boats, camping energy. It is not a 10-day add-on. Put it on Later and leave it there.</p>
+</section>
+
+<section id="around">
+  <div class="kicker">Getting around</div>
+  <h2>Hubs, and why 10 days cannot do Palawan + Cebu</h2>
+  <p><strong>Manila (MNL / NAIA)</strong> is the international door from Sydney (~8.5h). It is a bad domestic connector for El Nido once AirSwift has moved to Clark.</p>
+  <p><strong>Clark (CRK)</strong> is the El Nido domestic door from 29 Mar 2026. Plan the transfer between NAIA and Clark as its own move (coach or car, hours not minutes) unless you fly international into Clark.</p>
+  <p><strong>Cebu (CEB)</strong> is the Visayas hub: Moalboal, Bohol, Siquijor, Camiguin chains. Beautiful, and a different holiday. Ten days with an overwater Palawan stay cannot also “quickly see Cebu.” That is how people spend two days in airports.</p>
+  <p>Island hops eat weather buffers. February is dry in the west, still not a reason to stack Palawan + Cebu + Siargao.</p>
+</section>
+
+<section id="practical">
+  <div class="kicker">Practical</div>
+  <h2>Visa, cash, packing, the caution list</h2>
+  <figure class="fig">
+    <img src="img/05-bacuit-limestone-island.jpg" alt="Limestone island">
+    <figcaption class="caption">Feature — Limestone island · Location — Bacuit Bay, El Nido, Palawan</figcaption>
+  </figure>
+  <p><strong>Passport (AU):</strong> 30 days visa-free. Free eTravel QR at etravel.gov.ph — do it before you fly; screenshot it.</p>
+  <p><strong>Cash:</strong> Pesos on the islands. ATMs in El Nido town exist and fail. Get cash in Manila/Clark. Cards at the resort for the room; cash for eco fee, tips, island snacks.</p>
+  <p><strong>SIM:</strong> Airport eSIM or a Globe/Smart desk. Coverage on Miniloc is fine for messages, not a work week.</p>
+  <p><strong>Packing:</strong> Reef-safe sunscreen, long sleeve UV, dry bag for the kayak, one nicer shirt for dinner, cash pouch, off-the-shelf motion tabs if Tommy hates bangka chop. You do not need a full backpacker kit.</p>
+  <p><strong>Safety:</strong> Smartraveller currently advises a high degree of caution for the Philippines overall. Palawan tourist areas (El Nido, Coron, Puerto Princesa corridor) are where Australians actually go. Mindanao is not this trip. Standard street sense in Manila. Swim inside marked house-reef and lagoon rules.</p>
+</section>
+
+<section id="tagalog">
+  <div class="kicker">Tagalog · courtesies only</div>
+  <h2>Enough to be kind</h2>
+  <div class="phrase"><b>Salamat</b><span>Thank you</span></div>
+  <div class="phrase"><b>Po</b><span>Respect particle — add it</span></div>
+  <div class="phrase"><b>Magandang umaga</b><span>Good morning</span></div>
+  <div class="phrase"><b>Magandang gabi</b><span>Good evening</span></div>
+  <div class="phrase"><b>Pakiusap</b><span>Please</span></div>
+  <div class="phrase"><b>Paumanhin</b><span>Excuse me / sorry</span></div>
+  <div class="phrase"><b>Oo / Hindi</b><span>Yes / No</span></div>
+  <div class="phrase"><b>Masarap</b><span>Delicious</span></div>
+  <div class="phrase"><b>Magkano?</b><span>How much?</span></div>
+  <div class="phrase"><b>Ingat</b><span>Take care</span></div>
+</section>
+
+<section id="checklist">
+  <div class="kicker">Pre-trip</div>
+  <h2>Checklist (stays on this phone)</h2>
+  <div class="checklist" id="checks"></div>
+</section>
+
+<section id="sources">
+  <div class="kicker">Sources</div>
+  <h2>Compiled August 2026 for Dasha &amp; Tommy</h2>
+  <p>This is an original planning book, not Mellyba’s paid ebook. Seasonal warnings (March–May preferred; early January wind; February peak and Palawan booking-out) are industry and independent-blog consensus plus our own research. Island names are the public 13. Photos are real Wikimedia stills of named places — Lagen cottages are captioned as Lagen. Prices for the water cottage and the all-in band are the locked AUD figures from 31 Aug 2026. We did not invent restaurants. We did not scrape a paid PDF.</p>
+  <figure class="fig">
+    <img src="img/06-island-lagoon.jpg" alt="Island lagoon">
+    <figcaption class="caption">Feature — Island lagoon · Location — Bacuit Bay, El Nido, Palawan</figcaption>
+  </figure>
+  <figure class="fig">
+    <img src="img/13-tropical-lagoon.jpg" alt="Tropical lagoon">
+    <figcaption class="caption">Feature — Tropical lagoon · Location — Bacuit Bay, El Nido, Palawan</figcaption>
+  </figure>
+  <figure class="fig">
+    <img src="img/14-lagoon-gateway.jpg" alt="Lagoon gateway">
+    <figcaption class="caption">Feature — Lagoon gateway · Location — Bacuit Bay, El Nido, Palawan</figcaption>
+  </figure>
+  <figure class="fig">
+    <img src="img/15-karst-cove.jpg" alt="Karst cove">
+    <figcaption class="caption">Feature — Karst cove · Location — El Nido Bay, Palawan</figcaption>
+  </figure>
+</section>
+</div>
+
+<footer>For Dasha &amp; Tommy · Philippines February 2027 · gift, not a booking engine · photos CC BY / CC BY-SA via Wikimedia Commons</footer>
+
+<div id="overlay"></div>
+<aside id="panel" aria-label="Shortlist">
+  <div class="head">
+    <strong>Shortlist</strong>
+    <button type="button" id="closeShort" class="save">Close</button>
+  </div>
+  <div class="body">
+    <p class="print-only">For Dasha &amp; Tommy · Philippines February 2027</p>
+    <div class="panel-actions">
+      <button type="button" class="primary" id="copyList">Copy list</button>
+      <button type="button" id="printList">Print / PDF</button>
+      <button type="button" id="clearList">Clear</button>
+    </div>
+    <div id="panelBody"></div>
+  </div>
+</aside>
+
+<script src="vendor/leaflet/leaflet.js"></script>
+<script>window.L||document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>')</script>
+<script>
+(function(){
+  var KEY='dashaTommyPH';
+  var state={saved:{}, mood:null, checks:{}};
+  try{ state=Object.assign(state, JSON.parse(localStorage.getItem(KEY)||'{}')); }catch(e){}
+  function persist(){ localStorage.setItem(KEY, JSON.stringify(state)); renderCount(); }
+
+  var islands=[
+    {id:'loc-elnido',type:'Locations',name:'El Nido',place:'Palawan',time:'7 nights',who:'Couples who want lagoons and a deck over the water',verdict:'Go',why:'The whole trip. Miniloc, Big Lagoon, dry west season.',price:''},
+    {id:'loc-coron',type:'Locations',name:'Coron',place:'Palawan',time:'3 nights if you add days',who:'Wreck snorkellers, lake viewpoints',verdict:'Later',why:'Ferry north after Miniloc — not instead of it.',price:''},
+    {id:'loc-balabac',type:'Locations',name:'Balabac',place:'Southern Palawan',time:'3-day expedition',who:'Remote-beach expeditions',verdict:'Skip this trip',why:'Permits and boats; not a 10-day add-on.',price:''},
+    {id:'loc-portbarton',type:'Locations',name:'Port Barton',place:'Palawan',time:'2–3 nights',who:'People who found El Nido town loud',verdict:'Later',why:'Calmer Palawan; not the overwater picture.',price:''},
+    {id:'loc-bohol',type:'Locations',name:'Bohol',place:'Visayas',time:'3–4 nights',who:'Chocolate Hills, tarsiers, Panglao swim',verdict:'Skip this trip',why:'Cebu hub chain. Ten days cannot hold Palawan + Bohol.',price:''},
+    {id:'loc-siargao',type:'Locations',name:'Siargao',place:'Mindanao (surf)',time:'5+ nights',who:'Surf and Cloud 9 energy',verdict:'Skip this trip',why:'February is Type II wet. Wrong month, wrong trip.',price:''},
+    {id:'loc-camiguin',type:'Locations',name:'Camiguin',place:'Northern Mindanao',time:'3 nights',who:'Volcano-island slow travel',verdict:'Skip this trip',why:'Beautiful later; not on a 10-day Palawan cottage stay.',price:''},
+    {id:'loc-siquijor',type:'Locations',name:'Siquijor',place:'Visayas',time:'2–3 nights',who:'Quiet beaches via Dumaguete',verdict:'Skip this trip',why:'Needs the Cebu/Dumaguete chain you are not doing.',price:''},
+    {id:'loc-cebu',type:'Locations',name:'Cebu / Moalboal',place:'Visayas',time:'3–4 nights',who:'Sardine run, canyoneering crowds',verdict:'Skip this trip',why:'Do not combine Cebu + Palawan in 10 days.',price:''},
+    {id:'loc-banaue',type:'Locations',name:'Luzon / Banaue',place:'North Luzon',time:'3–4 nights',who:'Rice terraces, cool air',verdict:'Skip this trip',why:'A different Philippines. Save for a Manila-north trip.',price:''},
+    {id:'loc-romblon',type:'Locations',name:'Romblon',place:'Mimaropa',time:'3 nights',who:'Marble island, unhurried ferries',verdict:'Later',why:'Lovely and slow; eats the days you want on stilts.',price:''},
+    {id:'loc-leyte',type:'Locations',name:'South Leyte',place:'Visayas',time:'2–3 nights',who:'Ethical whale shark snorkel',verdict:'Later',why:'If you ever add days. Not Oslob. Not this 10-day.',price:''},
+    {id:'loc-apo',type:'Locations',name:'Apo Reef',place:'Occidental Mindoro',time:'Liveaboard / 3 days',who:'Serious reef time',verdict:'Later',why:'A dive expedition, not a cottage add-on.',price:''}
+  ];
+  var stays=[
+    {id:'stay-miniloc',type:'Stays',name:'Miniloc Island water cottages',place:'Miniloc Island, El Nido',why:'The stay to book. All-inclusive meals. Big Lagoon a 2-min kayak.',price:'~AUD 850–1,050/night for two, meals in'},
+    {id:'stay-lagen',type:'Stays',name:'Lagen Island water cottages',place:'Lagen Island, Bacuit Bay',why:'Same stilt product, slightly further from Big Lagoon. Photo in this book is Lagen.',price:'Peak band similar; confirm live quote'},
+    {id:'stay-town',type:'Stays',name:'El Nido town villa (generic)',place:'El Nido town',why:'Only if the cottage is sold out. Tricycles and 7am boats. Not the picture.',price:'Far below cottage; still February-high'}
+  ];
+  var acts=[
+    {id:'act-dawn',type:'Activities',name:'Kayak at dawn to Big Lagoon',place:'Miniloc Island',why:'Beat the day boats. 2026: paddle only, daily caps.',price:'Included if you have resort kayaks; otherwise hire'},
+    {id:'act-big',type:'Activities',name:'Big Lagoon',place:'Miniloc Island, El Nido',why:'The limestone corridor you came for.',price:'Eco fee + kayak; Tour A if from town'},
+    {id:'act-small',type:'Activities',name:'Small Lagoon kayak',place:'El Nido, Palawan',why:'The slot. Same motor-ban as Big Lagoon.',price:'Usually bundled on Tour A'},
+    {id:'act-cadlao',type:'Activities',name:'Cadlao Island kayak',place:'Cadlao Island, El Nido',why:'Quieter paddle, mountain across the bay.',price:'Resort hire or private bangka'},
+    {id:'act-reef',type:'Activities',name:'House reef snorkel',place:'Bacuit Bay / Miniloc',why:'Off the ladder. Empty afternoon on purpose.',price:'Included at the cottage'},
+    {id:'act-toura',type:'Activities',name:'Island-hop Tour A',place:'Bacuit Bay',why:'Lagoon day from town. Optional from Miniloc.',price:'Public shared-tour band; private costs more'},
+    {id:'act-tourc',type:'Activities',name:'Island-hop Tour C',place:'Bacuit Bay',why:'Hidden-beach energy. One extra day max.',price:'Public shared-tour band'},
+    {id:'act-nacpan',type:'Activities',name:'Nacpan Beach',place:'North of El Nido town',why:'Long sand if you ever leave the island for a land day.',price:'Tricycle / van from town'},
+    {id:'act-sunset',type:'Activities',name:'Bacuit Bay sunset from the deck',place:'Miniloc or Lagen',why:'The end of the empty day. No booking.',price:'Included'}
+  ];
+
+  function card(item, extra){
+    var on=!!state.saved[item.id];
+    var v=item.verdict?('<span class="badge '+(item.verdict==='Go'?'go':item.verdict==='Later'?'later':'skip')+'">'+item.verdict+'</span>'):'';
+    var meta=item.time?('<p style="margin:0 0 8px;color:var(--muted);font-size:.9rem">'+item.time+(item.who?' · '+item.who:'')+'</p>'):'';
+    var price=item.price?('<p style="margin:0;color:var(--muted);font-size:.9rem">'+item.price+'</p>'):'';
+    return '<article class="card" id="card-'+item.id+'" data-id="'+item.id+'"><div class="type">'+item.type+'</div>'+v+
+      '<h3>'+item.name+'</h3><p style="margin:0 0 6px;color:var(--muted)">'+item.place+'</p>'+meta+
+      '<p>'+item.why+'</p>'+price+
+      '<button type="button" class="save'+(on?' on':'')+'" data-save="'+item.id+'">'+(on?'Saved':'Save')+'</button></article>';
+  }
+  document.getElementById('islands').innerHTML=islands.map(card).join('');
+  document.getElementById('stays').innerHTML=stays.map(card).join('');
+  document.getElementById('acts').innerHTML=acts.map(card).join('');
+
+  var checks=[
+    'eTravel QR at etravel.gov.ph (screenshot)','Passports 6+ months, AU 30-day visa-free',
+    'Book Miniloc water cottages 4–6 months ahead','AirSwift ENI via Clark (CRK), not NAIA, from 29 Mar 2026',
+    'SYD–MNL timings with a real Clark connection buffer','Travel insurance that covers island boats',
+    'Pesos withdrawn in Manila/Clark, not as a Miniloc plan','Reef-safe sunscreen + dry bag',
+    'Smartraveller check the week you fly','Tell the resort you want a water cottage, not a garden room',
+    'Screenshot this shortlist','One nicer dinner shirt each'
+  ];
+  var ch=document.getElementById('checks');
+  ch.innerHTML=checks.map(function(t,i){
+    var id='c'+i; var on=!!state.checks[id];
+    return '<label><input type="checkbox" data-c="'+id+'"'+(on?' checked':'')+'> <span>'+t+'</span></label>';
+  }).join('');
+
+  document.body.addEventListener('click',function(e){
+    var s=e.target.closest('[data-save]');
+    if(s){
+      var id=s.getAttribute('data-save');
+      if(state.saved[id]) delete state.saved[id]; else {
+        var all=islands.concat(stays,acts);
+        var it=all.filter(function(x){return x.id===id})[0];
+        if(it) state.saved[id]=it;
+      }
+      persist(); refreshButtons();
+    }
+    var h=e.target.closest('.heart');
+    if(h){
+      state.mood=h.getAttribute('data-mood');
+      document.querySelectorAll('.heart').forEach(function(x){x.classList.toggle('on',x===h)});
+      document.getElementById('moodNote').textContent=state.mood==='yes'?'You both like this shape. Book the cottage.':state.mood==='maybe'?'Parked as a maybe. Open the shortlist before you sleep on it.':'Talk later — the shortlist will still be here.';
+      persist();
+    }
+  });
+  ch.addEventListener('change',function(e){
+    var c=e.target.getAttribute('data-c'); if(!c) return;
+    state.checks[c]=e.target.checked; persist();
+  });
+  function refreshButtons(){
+    document.querySelectorAll('[data-save]').forEach(function(b){
+      var on=!!state.saved[b.getAttribute('data-save')];
+      b.classList.toggle('on',on); b.textContent=on?'Saved':'Save';
+    });
+  }
+  function renderCount(){
+    document.getElementById('count').textContent=Object.keys(state.saved||{}).length;
+  }
+  function renderPanel(){
+    var groups={Locations:[],Stays:[],Activities:[]};
+    Object.keys(state.saved).forEach(function(k){
+      var it=state.saved[k]; if(groups[it.type]) groups[it.type].push(it);
+    });
+    var html='';
+    ['Locations','Stays','Activities'].forEach(function(g){
+      html+='<h3>'+g+'</h3>';
+      if(!groups[g].length) html+='<p class="empty">Nothing saved yet.</p>';
+      else groups[g].forEach(function(it){
+        html+='<div class="saved-item"><div class="type">'+it.type+'</div><strong>'+it.name+'</strong><div>'+it.place+'</div><div>'+it.why+'</div>'+(it.price?('<div>'+it.price+'</div>'):'')+'</div>';
+      });
+    });
+    document.getElementById('panelBody').innerHTML=html;
+  }
+  function openP(){ document.getElementById('panel').classList.add('open'); document.getElementById('overlay').classList.add('show'); renderPanel(); }
+  function closeP(){ document.getElementById('panel').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+  document.getElementById('openShort').onclick=openP;
+  document.getElementById('closeShort').onclick=closeP;
+  document.getElementById('overlay').onclick=closeP;
+  document.getElementById('copyList').onclick=function(){
+    var lines=['For Dasha & Tommy — PH Feb 2027 shortlist'];
+    Object.keys(state.saved).forEach(function(k){
+      var it=state.saved[k];
+      lines.push('• ['+it.type+'] '+it.name+' — '+it.place+' — '+it.why+(it.price?' ('+it.price+')':''));
+    });
+    var t=lines.join('\n');
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t);
+    else { var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+    document.getElementById('copyList').textContent='Copied';
+    setTimeout(function(){document.getElementById('copyList').textContent='Copy list';},1500);
+  };
+  document.getElementById('printList').onclick=function(){ renderPanel(); window.print(); };
+  document.getElementById('clearList').onclick=function(){ state.saved={}; persist(); refreshButtons(); renderPanel(); };
+  if(state.mood){
+    document.querySelectorAll('.heart').forEach(function(x){ if(x.getAttribute('data-mood')===state.mood) x.classList.add('on'); });
+  }
+
+  var MAP_CENTER=[11.155, 119.335], MAP_ZOOM=13, PH_CENTER=[11.8, 122.4], PH_ZOOM=6;
+  var locPts=[
+    {id:'loc-elnido',name:'El Nido',line:'The whole trip — lagoons and a deck over the water.',lat:11.1795,lng:119.3900},
+    {id:'loc-coron',name:'Coron',line:'Ferry north after Miniloc — wrecks and lakes, not instead of stilts.',lat:11.9980,lng:120.2040},
+    {id:'loc-portbarton',name:'Port Barton',line:'Calmer Palawan town. Not the overwater picture.',lat:10.3780,lng:119.1480},
+    {id:'loc-balabac',name:'Balabac',line:'Far-south expedition. Not a 10-day add-on.',lat:7.9860,lng:117.0640},
+    {id:'loc-bohol',name:'Bohol',line:'Chocolate Hills / Panglao — Cebu-hub chain, skip this trip.',lat:9.6500,lng:123.8500},
+    {id:'loc-siargao',name:'Siargao',line:'Surf island. February is Type II wet.',lat:9.7870,lng:126.1620},
+    {id:'loc-camiguin',name:'Camiguin',line:'Volcano island. Beautiful later, not this cottage stay.',lat:9.2540,lng:124.7170},
+    {id:'loc-siquijor',name:'Siquijor',line:'Quiet Visayas beaches via Dumaguete.',lat:9.2140,lng:123.5150},
+    {id:'loc-cebu',name:'Cebu / Moalboal',line:'Do not combine Cebu + Palawan in ten days.',lat:9.9470,lng:123.3990},
+    {id:'loc-banaue',name:'Banaue',line:'Rice terraces. A different Philippines.',lat:16.9190,lng:121.0590},
+    {id:'loc-romblon',name:'Romblon',line:'Marble island, unhurried ferries.',lat:12.5750,lng:122.2700},
+    {id:'loc-leyte',name:'South Leyte',line:'Ethical whale-shark snorkel if you ever add days.',lat:10.1340,lng:124.8450},
+    {id:'loc-apo',name:'Apo Reef',line:'Dive expedition off Mindoro, not a cottage add-on.',lat:12.6617,lng:120.4167},
+    {id:'loc-clark',name:'Clark (CRK)',line:'El Nido domestic door from 29 Mar 2026.',lat:15.1856,lng:120.5597},
+    {id:'loc-lio',name:'Lio (ENI)',line:'El Nido airport. Boat into Bacuit Bay from here.',lat:11.2020,lng:119.4170}
+  ];
+  var attPts=[
+    {id:'act-big',name:'Big Lagoon',line:'Limestone corridor; paddle only from 2026.',lat:11.1317,lng:119.3208},
+    {id:'act-small',name:'Small Lagoon',line:'The slot you squeeze through. Same motor ban.',lat:11.1295,lng:119.3235},
+    {id:'act-cadlao',name:'Cadlao kayak',line:'Quieter paddle, mountain across the bay.',lat:11.2030,lng:119.3380},
+    {id:'act-reef',name:'House reef',line:'Snorkel off the cottage ladder.',lat:11.1470,lng:119.3230},
+    {id:'act-nacpan',name:'Nacpan Beach',line:'Long sand north of town if you take a land day.',lat:11.3100,lng:119.4300},
+    {id:'act-sunset',name:'Bacuit sunset',line:'Empty afternoon, deck, no booking.',lat:11.1750,lng:119.3650},
+    {id:'act-toura',name:'Bacuit hop (Tour A/C)',line:'One island-hop day from town if you leave Miniloc.',lat:11.1550,lng:119.3500}
+  ];
+  var stayPts=[
+    {id:'stay-miniloc',name:'Miniloc water cottages',line:'The stay to book. Big Lagoon a two-minute kayak.',lat:11.1467,lng:119.3247},
+    {id:'stay-lagen',name:'Lagen water cottages',line:'Same stilts, slightly further from Big Lagoon.',lat:11.1360,lng:119.3450},
+    {id:'stay-town',name:'El Nido town villa',line:'Only if the cottage is sold out.',lat:11.1800,lng:119.3910}
+  ];
+
+  function pinIcon(color){
+    return L.divIcon({className:'',iconSize:[18,18],iconAnchor:[9,18],popupAnchor:[0,-16],
+      html:'<div class="pin" style="background:'+color+'"></div>'});
+  }
+  var allItems=islands.concat(stays,acts);
+  function itemById(id){ return allItems.filter(function(x){return x.id===id})[0]; }
+  function popupHtml(pt){
+    var it=itemById(pt.id);
+    var save=it?('<button type="button" class="save'+(state.saved[pt.id]?' on':'')+'" data-save="'+pt.id+'">'+(state.saved[pt.id]?'Saved':'Save')+'</button>'):'';
+    var read='<a href="#card-'+(pt.id)+'">Read this</a>';
+    if(!document.getElementById('card-'+pt.id) && (pt.id==='loc-clark'||pt.id==='loc-lio'))
+      read='<a href="#around">Read this</a>';
+    return '<strong>'+pt.name+'</strong><p class="popup-line">'+pt.line+'</p><div class="popup-actions">'+save+read+'</div>';
+  }
+  function addLayer(pts,color){
+    var g=L.layerGroup();
+    pts.forEach(function(pt){
+      L.marker([pt.lat,pt.lng],{icon:pinIcon(color),title:pt.name})
+        .bindPopup(function(){return popupHtml(pt);},{maxWidth:260})
+        .addTo(g);
+    });
+    return g;
+  }
+
+  function bootMap(){
+    if(typeof L==='undefined') return;
+    if(L.Icon && L.Icon.Default) L.Icon.Default.imagePath='vendor/leaflet/images/';
+    var map=L.map('map',{scrollWheelZoom:true,touchZoom:true,dragging:true,tap:true}).setView(MAP_CENTER, MAP_ZOOM);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    var lyLoc=addLayer(locPts,'#1a8a8a');
+    var lyAtt=addLayer(attPts,'#c9a056');
+    var lyStay=addLayer(stayPts,'#c45c3e');
+    lyLoc.addTo(map); lyAtt.addTo(map); lyStay.addTo(map);
+    function sync(){
+      var onL=document.getElementById('ly-loc').checked;
+      var onA=document.getElementById('ly-att').checked;
+      var onS=document.getElementById('ly-stay').checked;
+      if(onL) map.addLayer(lyLoc); else map.removeLayer(lyLoc);
+      if(onA) map.addLayer(lyAtt); else map.removeLayer(lyAtt);
+      if(onS) map.addLayer(lyStay); else map.removeLayer(lyStay);
+    }
+    ['ly-loc','ly-att','ly-stay'].forEach(function(id){
+      document.getElementById(id).addEventListener('change',sync);
+    });
+    document.getElementById('mapReset').onclick=function(){ map.setView(PH_CENTER, PH_ZOOM); };
+    map.on('popupopen',function(e){
+      var node=e.popup.getElement();
+      if(!node) return;
+      var a=node.querySelector('a[href^="#"]');
+      if(a){
+        a.addEventListener('click',function(ev){
+          var href=a.getAttribute('href');
+          var el=document.querySelector(href);
+          if(el){ ev.preventDefault(); el.scrollIntoView({behavior:'smooth',block:'start'}); }
+        });
+      }
+    });
+  }
+  if(document.readyState==='complete') bootMap();
+  else window.addEventListener('load', bootMap);
+
+  persist(); refreshButtons();
+})();
+</script>
+</body>
+</html>
